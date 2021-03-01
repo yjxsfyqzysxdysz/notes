@@ -139,7 +139,7 @@ API  说明  版本前端相关知识整理9——API
 
   可以和 `BigInt` 一起使用：
   + `+`、``*``、``-``、``**``、``%`` 。
-  + 除 `>>>` （无符号右移）之外的 [位操作](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Bitwise_Operators) 也可以支持。
+  + 除 `>>>` （无符号右移）之外的 位操作 也可以支持。
   + `BigInt` 不支持单目 (`+`) 运算符。
   + `/` 操作符对于整数的运算也没问题。可是因为这些变量是 `BigInt` 而不是 `BigDecimal` ，该操作符结果会向零取整，也就是说不会返回小数部分。
 
@@ -310,26 +310,144 @@ API  说明  版本前端相关知识整理9——API
 | Date.prototype.setUTCSeconds(secondsValue[, msValue])        | 根据世界时设置 Date 对象中的秒钟 (0 ~ 59)。                  |
 | Date.prototype.toUTCString()                                 | 把一个日期对象转换为一个以UTC时区计时的字符串。              |
 
-## Object API
+## 基本对象
 
-| API  | 说明 | 版本 |
-| ---- | ---- | ---- |
-|      |      |      |
-|      |      |      |
-|      |      |      |
-|      |      |      |
-|      |      |      |
-|      |      |      |
-|      |      |      |
-|      |      |      |
-|      |      |      |
-|      |      |      |
-|      |      |      |
-|      |      |      |
-|      |      |      |
-|      |      |      |
+### Object
+
+#### Object 构造函数的方法
+
+| API                                          | 说明                                                         |
+| -------------------------------------------- | ------------------------------------------------------------ |
+| Object.assign(target, ...sources)            | 将所有可枚举属性的值从一个或多个源对象分配到目标对象。它将返回目标对象。<br />为了将属性定义（包括其可枚举性）复制到原型，应使用`Object.getOwnPropertyDescriptor()`和`Object.defineProperty()` 。<br />`String`类型和 `Symbol` 类型的属性都会被拷贝。 |
+| Object.create(proto，[propertiesObject])     | 使用指定的原型对象和属性创建一个新对象。使用现有的对象来提供新创建的对象的\__proto__。 |
+| Object.defineProperty(obj, prop, descriptor) | 会直接在一个对象上定义一个新属性，或者修改一个对象的现有属性，并返回此对象<br />`configurable`、 `enumerable`、 `value`、 `writable`、 `get`、 `set` |
+| Object.defineProperties(obj, props)          | 给对象添加多个属性并分别指定它们的配置。<br />**`configurable`**, `true` 当且仅当该属性描述符的类型可以被改变并且该属性可以从对应对象中删除。默认为 `false` <br />**`enumerable`**, `true` 当且仅当在枚举相应对象上的属性时该属性显现。默认为 `false`<br />**`value`**, 与属性关联的值。可以是任何有效的JavaScript值（数字，对象，函数等）。默认为 `undefined`。<br />**`writable`**, `true` 当且仅当与该属性相关联的值可以用assignment operator改变时。默认为 `false`<br />**`get`**, 作为该属性的 getter 函数，如果没有 getter 则为undefined。函数返回值将被用作属性的值。默认为 `undefined`<br />**`set`**, 作为属性的 setter 函数，如果没有 setter 则为undefined。函数将仅接受参数赋值给该属性的新值。默认为 `undefined` |
+| Object.entries(obj)                          | 返回给定对象自身可枚举属性的 [key, value] 数组。<br />方法返回一个给定对象自身可枚举属性的键值对数组，其排列与使用 **for...in** 循环遍历该对象时返回的顺序一致（区别在于 `for-in` 循环还会枚举原型链中的属性）。 |
+| Object.freeze(obj)                           | 冻结对象：其他代码不能删除或更改任何属性。此外，冻结一个对象后该对象的原型也不能被修改。`freeze()` 返回和传入的参数相同的对象。 |
+| Object.getOwnPropertyDescriptor(obj, prop)   | 返回指定对象上一个自有属性对应的属性描述符。（自有属性指的是直接赋予该对象的属性，不需要从原型链上进行查找的属性） |
+| Object.getOwnPropertyNames(obj)              | 返回一个由指定对象的所有自身属性的属性名（包括不可枚举属性但不包括Symbol值作为名称的属性）组成的数组。 |
+| Object.getOwnPropertySymbols(obj)            | 返回一个给定对象自身的所有 Symbol 属性的数组。<br />除非你在对象上赋值了 Symbol 否则只会返回一个空的数组。 |
+| Object.getPrototypeOf(obj)                   | 返回指定对象的原型对象。如果没有继承属性，则返回 `null` 。   |
+| Object.is(value1, value2)                    | 比较两个值是否相同。所有 NaN 值都相等（这与\==和\===不同）。 |
+| Object.isExtensible(obj)                     | 判断对象是否可扩展。（是否可以在它上面添加新的属性）返回一个`Boolean`值。 |
+| Object.isFrozen(obj)                         | 判断对象是否已经冻结。返回一个`Boolean`值。                  |
+| Object.isSealed(obj)                         | 判断对象是否已经密封。返回一个`Boolean`值。密封对象是指那些不可 `扩展` 的，且所有自身属性都不可配置且因此不可删除（但不一定是不可写）的对象。 |
+| Object.keys(obj)                             | 返回一个包含所有给定对象自身可枚举属性名称的数组。数组中属性名的排列顺序和正常循环遍历该对象时返回的顺序一致 。 |
+| Object.preventExtensions(obj)                | 防止对象的任何扩展。让一个对象变的不可扩展，也就是永远不能再添加新的属性。一般来说，不可扩展对象的属性可能仍然可被**删除** |
+| Object.seal(obj)                             | 封闭一个对象，阻止添加新属性并将所有现有属性标记为不可配置。当前属性的值只要原来是可写的就可以改变。 |
+| Object.setPrototypeOf(obj, prototype)        | 设置对象的原型（即内部 [[Prototype]] 属性）。                |
+| Object.values(obj)                           | 返回给定对象自身可枚举值的数组。值的顺序与使用`for...in`循环的顺序相同 ( 区别在于 for-in 循环枚举原型链中的属性 )。 |
+
+`Object.is()` 方法判断两个值是否为同一个值：
+
++ 都是 `undefined`
++ 都是 `null`
++ 都是 `true` 或 `false`
++ 都是相同长度的字符串且相同字符按相同顺序排列
++ 都是相同对象（意味着每个对象有同一个引用）
++ 都是数字且
+  + 都是 `+0`
+  + 都是 `-0`
+  + 都是 `NaN`
+  + 或都是非零而且非 `NaN` 且为同一个值
+
+与`==` 运算**不同**。 `==` 运算符在判断相等前对两边的变量(如果它们不是同一类型) 进行强制转换 (这种行为的结果会将 `"" == false` 判断为 `true`)， 而 `Object.is`不会强制转换两边的值。
+
+与`===` 运算也不相同。 `===` 运算符 (也包括 `==` 运算符) 将数字 `-0` 和 `+0` 视为相等，而将`Number.NaN` 与`NaN`视为不相等。
+
+#### Object 实例 及 构造函数 属性
+
+| 属性                           | 说明                                                 |
+| ------------------------------ | ---------------------------------------------------- |
+| `Object.prototype.constructor` | 特定的函数，用于创建一个对象的原型。                 |
+| `Object.prototype.__proto__`   | 指向当对象被实例化的时候，用作原型的对象。**已废弃** |
 
 
+
+#### Object 实例 及 构造函数 方法
+
+| API                                         | 说明                                                         |
+| ------------------------------------------- | ------------------------------------------------------------ |
+| Object.prototype.hasOwnProperty(prop)       | 返回一个布尔值 ，表示某个对象是否含有指定的属性，而且此属性非原型链继承的。 |
+| prototypeObj.isPrototypeOf(object)          | 返回一个布尔值，表示指定的对象是否在本对象的原型链中。       |
+| Object.prototype.propertyIsEnumerable(prop) | 判断指定属性是否可枚举，内部属性设置参见 ECMAScript [[Enumerable]] attribute 。 |
+| Object.prototype.toString()                 | 返回对象的字符串表示。                                       |
+| Object.prototype.valueOf()                  | 返回指定对象的原始值。<br />Math 和 Error 对象没有 valueOf 方法 |
+
+### Function
+
+每个 JavaScript 函数实际上都是一个 `Function` 对象。运行 `(function(){}).constructor === Function // true` 便可以得到这个结论。
+
+#### 属性
+
+| 属性            | 说明                                                         |
+| --------------- | ------------------------------------------------------------ |
+| Function.caller | 获取调用函数的具体对象。<br />如果一个函数`f`是在全局作用域内被调用的,则`f.caller为``null`,相反,如果一个函数是在另外一个函数作用域内被调用的,则`f.caller指向调用它的那个函数.` |
+| Function.length | 获取函数的接收参数个数。                                     |
+| Function.name   | 获取函数的名称                                               |
+#### 方法
+
+| API                                                     | 说明                                                         |
+| ------------------------------------------------------- | ------------------------------------------------------------ |
+| Function.prototype.apply(thisArg, [argsArray])          | 在一个对象的上下文中应用另一个对象的方法；参数能够以数组形式传入。 |
+| Function.prototype.bind(thisArg[, arg1[, arg2[, ...]]]) | bind()方法会创建一个新函数,称为绑定函数.当调用这个绑定函数时,绑定函数会以创建它时传入 bind()方法的第一个参数作为 this,传入 bind()方法的第二个以及以后的参数加上绑定函数运行时本身的参数按照顺序作为原函数的参数来调用原函数. |
+| Function.prototype.call(thisArg, arg1, arg2, ...)       | 在一个对象的上下文中应用另一个对象的方法；参数能够以列表形式传入。 |
+| Function.prototype.toString()                           | 获取函数的实现源码的字符串。                                 |
+
+### Boolean
+
+如果省略或值`0`，`-0`，`null`，`false`，`NaN`，`undefined`，或空字符串（`""`），该对象具有的初始值`false`。所有其他值，包括任何对象，空数组（`[]`）或字符串`"false"`，都会创建一个初始值为`true`的对象。
+
+| API                                                          | 说明                                        |
+| ------------------------------------------------------------ | ------------------------------------------- |
+| new Boolean(值)	本质上就是将值转为布尔型（强制转为布尔型） |                                             |
+| Boolean(值)			（强制转为布尔型）                    |                                             |
+| !!值				隐式转为布尔型                           |                                             |
+| Boolean.prototype.toString()                                 | 根据对象的值返回字符串`"true"`或`"false"`。 |
+| Boolean.prototype.valueOf()                                  | 返回Boolean对象的原始值。                   |
+
+### Symobl
+
+**symbol** 是一种基本数据类型 （primitive data type）。`Symbol()`函数会返回**symbol**类型的值，该类型具有静态属性和静态方法。它的静态属性会暴露几个内建的成员对象；它的静态方法会暴露全局的symbol注册，且类似于内建对象类，但作为构造函数来说它并不完整，因为它不支持语法：**"`new Symbol()`"**。
+
+每个从`Symbol()`返回的symbol值都是唯一的。一个symbol值能**作为对象属性的标识符**；这是该数据类型**仅有的目的**。
+
+Symbol 在 `for...in` 迭代中不可枚举。
+
+Symbol() 函数每次都会返回新的一个 symbol。
+
+#### 全局共享 Symbol
+
+| API                | 说明                                                         |
+| ------------------ | ------------------------------------------------------------ |
+| Symbol.for(key)    | 会根据给定的键 `key`，来从运行时的 symbol 注册表中找到对应的 symbol，如果找到了，则返回它，否则，新建一个与该键关联的 symbol，并放入全局 symbol 注册表中。 |
+| Symbol.keyFor(sym) | 用来获取全局symbol 注册表中与某个 symbol 关联的键。          |
+
+```javascript
+var sym = Symbol("foo");
+
+Symbol.for("foo"); // 创建一个 symbol 并放入 symbol 注册表中，键为 "foo"
+									 // 从 symbol 注册表中读取键为"foo"的 symbol
+
+Symbol.for("bar") === Symbol.for("bar"); // true，证明了上面说的
+Symbol("bar") === Symbol("bar"); // false，Symbol() 函数每次都会返回新的一个 symbol
+
+var sym = Symbol.for("mario");
+sym.toString(); 
+// "Symbol(mario)"，mario 既是该 symbol 在 symbol 注册表中的键名，又是该 symbol 自身的描述字符串
+
+// 创建一个全局 Symbol 
+var globalSym = Symbol.for("foo"); 
+Symbol.keyFor(globalSym); // "foo"
+```
+
+## 错误对象
+
+### Error
+
+```javascript
+new Error([message[, fileName[,lineNumber]]])
+```
 
 ## 可索引的集合对象
 
@@ -403,49 +521,35 @@ new Array(arrayLength)
 
 在下面的众多遍历方法中，有很多方法都需要指定一个回调函数作为参数。在每一个数组元素都分别执行完回调函数之前，数组的length属性会被缓存在某个地方，所以，如果你在回调函数中为当前数组添加了新的元素，那么那些新添加的元素是不会被遍历到的。此外，如果在回调函数中对当前数组进行了其它修改，比如改变某个元素的值或者删掉某个元素，那么随后的遍历操作可能会受到未预期的影响。总之，不要尝试在遍历过程中对原数组进行任何修改，虽然规范对这样的操作进行了详细的定义，但为了可读性和可维护性，请不要这样做。
 
-| 方法                          | 说明                                                         |
-| ----------------------------- | ------------------------------------------------------------ |
-| Array.prototype.forEach()     | 为数组中的每个元素执行一次回调函数。                         |
-| Array.prototype.entries()     | 返回一个数组迭代器对象，该迭代器会包含所有数组元素的键值对。 |
-| Array.prototype.every()       | 如果数组中的每个元素都满足测试函数，则返回 true，否则返回 false。 |
-| Array.prototype.some()        | 如果数组中至少有一个元素满足测试函数，则返回 true，否则返回 false。 |
-| Array.prototype.filter()      | 将所有在过滤函数中返回 true 的数组元素放进一个新数组中并返回。 |
-| Array.prototype.find()        | 找到第一个满足测试函数的元素并返回那个元素的值，如果找不到，则返回 undefined。 |
-| Array.prototype.findIndex()   | 找到第一个满足测试函数的元素并返回那个元素的索引，如果找不到，则返回 -1。 |
-| Array.prototype.keys()        | 返回一个数组迭代器对象，该迭代器会包含所有数组元素的键。     |
-| Array.prototype.map()         | 返回一个由回调函数的返回值组成的新数组。                     |
-| Array.prototype.reduce()      | 从左到右为每个数组元素执行一次回调函数，并把上次回调函数的返回值放在一个暂存器中传给下次回调函数，并返回最后一次回调函数的返回值。 |
-| Array.prototype.reduceRight() | 从右到左为每个数组元素执行一次回调函数，并把上次回调函数的返回值放在一个暂存器中传给下次回调函数，并返回最后一次回调函数的返回值。 |
-| Array.prototype.values()      | 返回一个数组迭代器对象，该迭代器会包含所有数组元素的值。     |
+| 方法                                                         | 说明                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| Array.prototype.forEach(callback(currentValue [, index [, array]])[, thisArg]) | 为数组中的每个元素执行一次回调函数。那些已删除或者未初始化的项将被跳过 |
+| Array.prototype.map(callback(currentValue [, index [, array]])[, thisArg]) | 返回一个由回调函数的返回值组成的新数组，其结果是该数组中的每个元素是调用一次提供的函数后的返回值。 |
+| Array.prototype.every(callback(element[, index[, array]])[, thisArg]) | 如果数组中的每个元素都满足测试函数，则返回 true，否则返回 false。 |
+| Array.prototype.some(callback(element[, index[, array]])[, thisArg]) | 如果数组中至少有一个元素满足测试函数，则返回 true，否则返回 false。 |
+| Array.prototype.keys()                                       | 返回一个数组迭代器对象，该迭代器会包含所有数组元素的键。     |
+| Array.prototype.values()                                     | 返回一个数组迭代器对象，该迭代器会包含所有数组元素的值。     |
+| Array.prototype.reduce(callback(accumulator, currentValue[, index[, array]])[, initialValue]) | 从左到右为每个数组元素执行一次回调函数，并把上次回调函数的返回值放在一个暂存器中传给下次回调函数，并返回最后一次回调函数的返回值。<br />如果没有提供 `initialValue`，那么`accumulator`取数组中的第一个值，`currentValue`取数组中的第二个值。 |
+| Array.prototype.reduceRight(callback(accumulator, currentValue[, index[, array]])[, initialValue]) | 从右到左为每个数组元素执行一次回调函数，并把上次回调函数的返回值放在一个暂存器中传给下次回调函数，并返回最后一次回调函数的返回值。<br />如果未提供该初始值，则将使用数组中的最后一个元素，并跳过该元素。如果不给出初始值，则需保证数组不为空。 |
+| Array.prototype.filter(callback(element[, index[, array]])[, thisArg]) | 将所有在过滤函数中返回 true 的数组元素放进一个新数组中并返回。 |
+| Array.prototype.find(callback(element[, index[, array]])[, thisArg])<br />Array.prototype.findIndex(callback(element[, index[, array]])[, thisArg]) | 找到第一个满足测试函数的元素并返回那个元素的值，如果找不到，则返回 undefined。<br />如果找不到，则返回 -1。 |
 
+## 结构化数据
 
+### JSON
 
+| API         | 说明                                                     |
+| ----------- | -------------------------------------------------------- |
+| parse()     | 以文本字符串形式接受JSON对象作为参数，并返回相应的对象。 |
+| stringify() | 接收一个对象作为参数，返回一个对应的JSON字符串。         |
 
-## Boolean API
-
-| API                                                          | 说明 | 版本 |
-| ------------------------------------------------------------ | ---- | ---- |
-| new Boolean(值)	本质上就是将值转为布尔型（强制转为布尔型） |      |      |
-| Boolean(值)			（强制转为布尔型）                    |      |      |
-| ！！值				隐式转为布尔型                         |      |      |
-|                                                              |      |      |
-
-
-
-## JSON API
-
-| API         | 说明                                                     | 版本 |
-| ----------- | -------------------------------------------------------- | ---- |
-| parse()     | 以文本字符串形式接受JSON对象作为参数，并返回相应的对象。 |      |
-| stringify() | 接收一个对象作为参数，返回一个对应的JSON字符串。         |      |
-
-### parse
+#### parse
 
 ```
 JSON.parse(text[, reviver])
 ```
 
-#### 参数
+##### 参数
 
 + `text`
 
@@ -455,17 +559,17 @@ JSON.parse(text[, reviver])
 
   转换器, 如果传入该参数(函数)，可以用来修改解析生成的原始值，调用时机在 parse 函数返回之前。
 
-#### 返回值
+##### 返回值
 
 Object 类型, 对应给定 JSON 文本的对象/值。
 
-### stringify
+#### stringify
 
 ```
 JSON.stringify(value[, replacer [, space]])
 ```
 
-#### 参数
+##### 参数
 
 + `value`
 
@@ -479,7 +583,7 @@ JSON.stringify(value[, replacer [, space]])
 
   指定缩进用的空白字符串，用于美化输出（pretty-print）；如果参数是个数字，它代表有多少的空格；上限为10。该值若小于1，则意味着没有空格；如果该参数为字符串（当字符串长度超过10个字母，取其前10个字母），该字符串将被作为空格；如果该参数没有提供（或者为 null），将没有空格。
 
-#### 返回值
+##### 返回值
 
   一个表示给定值的JSON字符串。
 
@@ -498,61 +602,205 @@ JSON.stringify(value[, replacer [, space]])
   + `NaN `和 `Infinity `格式的数值及 `null` 都会被当做 `null`。
   + 其他类型的对象，包括 `Map`/`Set`/`WeakMap`/`WeakSet`，仅会序列化可枚举的属性。
 
-## Reg Exp API
+## 使用键的集合对象
 
-| API                                                          | 说明                                                         | 版本 |
-| ------------------------------------------------------------ | ------------------------------------------------------------ | ---- |
-| replace(value1,value2)	用于查找字符串value1，使用value2的值替换。value1可以使用字符串形式，也可以使用匹配形式/china/ig |                                                              |      |
-| i ->ignore	忽略大小写                                     |                                                              |      |
-| g ->global	全局查找                                       |                                                              |      |
-| match(value)	用于查找匹配的字符串，返回一个数组，里边可以使用i和g |                                                              |      |
-| search(value)	用于查找匹配的字符串，返回满足条件的第一个字符的下标，如果找不到返回-1，里面可以使用i。 |                                                              |      |
-| reg.test(str)                                                | 用reg验证str是否符合要求                                     |      |
-| reg.exec(str)                                                | 既查找每个关键词内容，又查找每个关键词位置;在str中查找下一个满足reg要求的关键词 |      |
-|                                                              |                                                              |      |
-|                                                              |                                                              |      |
+### Map
+
+`Objects` 和 `Maps` 类似的是，它们都允许你按键存取一个值、删除键、检测一个键是否绑定了值。因此（并且也没有其他内建的替代方式了）过去我们一直都把对象当成 `Maps` 使用。不过 `Maps` 和 `Objects` 有一些重要的区别，在下列情况里使用 `Map` 会是更好的选择：
+
+|          | Map                                                          | Object                                                       |
+| :------- | :----------------------------------------------------------- | ------------------------------------------------------------ |
+| 意外的键 | `Map` 默认情况不包含任何键。只包含显式插入的键。             | 一个 `Object` 有一个原型, 原型链上的键名有可能和你自己在对象上的设置的键名产生冲突。<br />**注意:** 虽然 ES5 开始可以用 `Object.create(null)` 来创建一个没有原型的对象，但是这种用法不太常见。 |
+| 键的类型 | 一个 `Map`的键可以是**任意值**，包括函数、对象或任意基本类型。 | 一个`Object` 的键必须是一个 `String` 或是 `Symbol`           |
+| 键的顺序 | `Map` 中的 key 是有序的。因此，当迭代的时候，一个 `Map` 对象以插入的顺序返回键值。 | 一个 `Object` 的键是无序的<br />**注意：**自ECMAScript 2015规范以来，对象*确实*保留了字符串和Symbol键的创建顺序； 因此，在只有字符串键的对象上进行迭代将按插入顺序产生键。 |
+| Size     | `Map` 的键值对个数可以轻易地通过`size` 属性获取              | `Object` 的键值对个数只能手动计算                            |
+| 迭代     | `Map` 是 `iterable` 的，所以可以直接被迭代。                 | 迭代一个`Object`需要以某种方式获取它的键然后才能迭代。       |
+| 性能     | 在**频繁增删键值对**的场景下表现更好。                       | 在频繁添加和删除键值对的场景下未作出优化。                   |
+
+#### 属性
+
+| 属性               | 说明                         |
+| ------------------ | ---------------------------- |
+| Map.prototype.size | 返回Map对象的键/值对的数量。 |
+
+#### 方法
+
+| API                                                          | 说明                                                         |
+| ------------------------------------------------------------ | ------------------------------------------------------------ |
+| Map.prototype.clear()                                        | 移除Map对象的所有键/值对 。                                  |
+| Map.prototype.delete(key)                                    | 如果 Map 对象中存在该元素，则移除它并返回 true；否则如果该元素不存在则返回 false。<br />随后调用 Map.prototype.has(key) 将返回 false 。 |
+| Map.prototype.entries()                                      | 返回一个新的 Iterator 对象，它按插入顺序包含了Map对象中每个元素的 [key, value] 数组。 |
+| Map.prototype.forEach(callback(\[value]\[,key]\[,map])[, thisArg]) | 按插入顺序，为 Map对象里的每一键值对调用一次callbackFn函数。如果为forEach提供了thisArg，它将在每次回调中作为this值。 |
+| Map.prototype.get(key)                                       | 返回键对应的值，如果不存在，则返回undefined。                |
+| Map.prototype.has(key)                                       | 返回一个布尔值，表示Map实例是否包含键对应的值。              |
+| Map.prototype.set(key, value)                                | 设置Map对象中键的值。返回该Map对象。                         |
+| Map.prototype.keys()                                         | 返回一个新的 Iterator对象， 它按插入顺序包含了Map对象中每个元素的键 。 |
+| Map.prototype.values()                                       | 返回一个新的Iterator对象，它按插入顺序包含了Map对象中每个元素的值 。 |
+
+```javascript
+let kvArray = [["key1", "value1"], ["key2", "value2"]];
+
+// 使用常规的Map构造函数可以将一个二维键值对数组转换成一个Map对象
+let myMap = new Map(kvArray);
+
+// 使用Array.from函数可以将一个Map对象转换成一个二维键值对数组
+console.log(Array.from(myMap)); // 输出和kvArray相同的数组
+
+// 更简洁的方法来做如上同样的事情，使用展开运算符
+console.log([...myMap]);
+
+// 或者在键或者值的迭代器上使用Array.from，进而得到只含有键或者值的数组
+console.log(Array.from(myMap.keys())); // 输出 ["key1", "key2"]
+```
+
+### Set
+
+**`Set`** 对象允许你存储任何类型的**唯一值**，无论是原始值或者是对象引用。
+
+#### 属性
+
+| 属性               | 说明                      |
+| ------------------ | ------------------------- |
+| Set.prototype.size | 返回 Set 对象中的值的个数 |
+
+#### 方法
+
+| API                                          | 说明                                                         |
+| -------------------------------------------- | ------------------------------------------------------------ |
+| Set.prototype.add(value)                     | 在Set对象尾部添加一个元素。返回该Set对象。                   |
+| Set.prototype.clear()                        | 移除Set对象内的所有元素。                                    |
+| Set.prototype.delete(value)                  | 移除Set中与这个值相等的元素，返回Set.prototype.has(value)在这个操作前会返回的值（即如果该元素存在，返回true，否则返回false）。Set.prototype.has(value)在此后会返回false。 |
+| Set.prototype.entries()                      | 返回一个新的迭代器对象，该对象包含Set对象中的按插入顺序排列的所有元素的值的[value, value]数组。为了使这个方法和Map对象保持相似， 每个值的键和值相等。 |
+| Set.prototype.forEach(callbackFn[, thisArg]) | 按照插入顺序，为Set对象中的每一个值调用一次callBackFn。如果提供了thisArg参数，回调中的this会是这个参数。 |
+| Set.prototype.has(value)                     | 返回一个布尔值，表示该值在Set中存在与否。                    |
+| Set.prototype.keys()                         | 与values()方法相同，返回一个新的迭代器对象，该对象包含Set对象中的按插入顺序排列的所有元素的值。 |
+| Set.prototype.values()                       | 返回一个新的迭代器对象，该对象包含Set对象中的按插入顺序排列的所有元素的值。 |
+
+### WeakMap
+
+**`WeakMap`** 对象是一组键/值对的集合，其中的键是弱引用的。其键必须是对象，而值可以是任意的。
+
+`WeakMap` 的 key 是不可枚举的 (没有方法能给出所有的 key)
+
+**主要用于，要往对象上添加数据，又不想干扰垃圾回收机制**
+
+#### 属性
+
+| 属性           | 说明                    |
+| -------------- | ----------------------- |
+| WeakMap.length | `length` 属性的值为 0。 |
+
+#### 方法
+
+| API                               | 说明                                                         |
+| --------------------------------- | ------------------------------------------------------------ |
+| WeakMap.prototype.delete(key)     | 移除key的关联对象。执行后 WeakMap.prototype.has(key)返回false。 |
+| WeakMap.prototype.get(key)        | 返回key关联对象, 或者 undefined(没有key关联对象时)。         |
+| WeakMap.prototype.has(key)        | 根据是否有key关联对象返回一个Boolean值。                     |
+| WeakMap.prototype.set(key, value) | 在WeakMap中设置一组key关联对象，返回这个 WeakMap对象         |
+
+### WeakSet
+
+**`WeakSet`** 对象允许你将*弱保持对象*存储在一个集合中。
+
+和 `Set` 对象的区别有两点:
+
++ 与`Set`相比，`WeakSet` 只能是**对象的集合**，而不能是任何类型的任意值。
++ `WeakSet`持弱引用：集合中对象的引用为弱引用。 如果没有其他的对`WeakSet`中对象的引用，那么这些对象会被当成垃圾回收掉。 这也意味着WeakSet中没有存储当前对象的列表。 正因为这样，`WeakSet` 是不可枚举的。
+
+#### 属性
+
+| 属性           | 说明                    |
+| -------------- | ----------------------- |
+| WeakSet.length | `length` 属性的值为 0。 |
+
+#### 方法
+
+| API                             | 说明                                                         |
+| ------------------------------- | ------------------------------------------------------------ |
+| WeakSet.prototype.add(value)    | 在该 WeakSet 对象中添加一个新元素 value.                     |
+| WeakSet.prototype.delete(value) | 从该 WeakSet 对象中删除 value 这个元素, 之后 WeakSet.prototype.has(value) 方法便会返回 false. |
+| WeakSet.prototype.has(value)    | 返回一个布尔值,  表示给定的值 value 是否存在于这个 WeakSet 中. |
+## 控制抽象对象
+
+### Promise
+
+#### 静态方法
+
+| API                          | 说明                                                         |
+| ---------------------------- | ------------------------------------------------------------ |
+| Promise.all(iterable)        | 这个方法返回一个新的promise对象，该promise对象在iterable参数对象里所有的promise对象都成功的时候才会触发成功，一旦有任何一个iterable里面的promise对象失败则立即触发该promise对象的失败。这个新的promise对象在触发成功状态以后，会把一个包含iterable里所有promise返回值的数组作为成功回调的返回值，顺序跟iterable的顺序保持一致；如果这个新的promise对象触发了失败状态，它会把iterable里第一个触发失败的promise对象的错误信息作为它的失败错误信息。Promise.all方法常被用于处理多个promise对象的状态集合。（可以参考jQuery.when方法---译者注） |
+| Promise.allSettled(iterable) | 等到所有promises都已敲定（settled）（每个promise都已兑现（fulfilled）或已拒绝（rejected））。 |
+| Promise.any(iterable)        | 返回一个promise，该promise在所有promise完成后完成。并带有一个对象数组，每个对象对应每个promise的结果。 |
+| Promise.race(iterable)       | 接收一个Promise对象的集合，当其中的一个 promise 成功，就返回那个成功的promise的值。 |
+| Promise.reject(reason)       | 当iterable参数里的任意一个子promise被成功或失败后，父promise马上也会用子promise的成功返回值或失败详情作为参数调用父promise绑定的相应句柄，并返回该promise对象。 |
+| Promise.resolve(value)       | 返回一个状态为失败的Promise对象，并将给定的失败信息传递给对应的处理方法 |
+
+#### 原型方法
+
+| API                                             | 说明                                                         |
+| ----------------------------------------------- | ------------------------------------------------------------ |
+| Promise.prototype.catch(onRejected)             | 添加一个拒绝(rejection) 回调到当前 promise, 返回一个新的promise。当这个回调函数被调用，新 promise 将以它的返回值来resolve，否则如果当前promise 进入fulfilled状态，则以当前promise的完成结果作为新promise的完成结果. |
+| Promise.prototype.then(onFulfilled, onRejected) | 添加解决(fulfillment)和拒绝(rejection)回调到当前 promise, 返回一个新的 promise, 将以回调的返回值来resolve. |
+| Promise.prototype.finally(onFinally)            | 添加一个事件处理回调于当前promise对象，并且在原promise对象解析完毕后，返回一个新的promise对象。回调会在当前promise运行完毕后被调用，无论当前promise的状态是完成(fulfilled)还是失败(rejected) |
+
+```javascript
+new Promise((resolve, reject) => {
+  // ?做一些异步操作，最终会调用下面两者之一:
+  //
+  //   resolve(someValue); // fulfilled
+  // ?或
+  //   reject("failure reason"); // rejected
+});
+```
+
+### AsyncFunction
+
+`AsyncFunction` 构造函数用来创建新的 `异步函数` 对象，JavaScript 中每个异步函数都是 `AsyncFunction` 的对象。
+
+注意，`AsyncFunction` 并不是一个全局对象，需要通过下面的方法来获取：
+
+```js
+Object.getPrototypeOf(async function(){}).constructor
+```
+
+```javascript
+new AsyncFunction([arg1[, arg2[, ...argN]],] functionBody)
+```
+
+## 反射
+
+
 
 
 
 ## Gloabl / Window API
 
-| API                     | 说明                                                         | 版本 |
-| ----------------------- | ------------------------------------------------------------ | ---- |
-| setTimeout()            | 在指定的时间后执行一段代码                                   |      |
-| setInterval()           | 以固定的时间间隔，重复运行一段代码                           |      |
-| requestAnimationFrame() | setInterval()的现代版本;在浏览器下一次重新绘制显示之前执行指定的代码块，从而允许动画在适当的帧率下运行，而不管它在什么环境中运行 |      |
-| clearInterval()         |                                                              |      |
-| clearTimeout()          |                                                              |      |
-| encodeURI()             | 对一个URI进行编码                                            |      |
-| decodeURI               | 对一个URI进行解码                                            |      |
-| eval                    | 执行字符串表达式                                             |      |
-| parseInt                | 将数据转为整型                                               |      |
-| parseFloat              | 将数据转为浮点型                                             |      |
-| typeof                  | 判断一个数据类型                                             |      |
-| isNaN                   | 检查一个值是否为NaN,如果是->true , 否->false                 |      |
-| isFinite                | 检查一个值是否为有限值，是->true  否->false                  |      |
-|                         |                                                              |      |
-|                         |                                                              |      |
-|                         |                                                              |      |
-|                         |                                                              |      |
-|                         |                                                              |      |
-|                         |                                                              |      |
+| API                     | 说明                                                         |
+| ----------------------- | ------------------------------------------------------------ |
+| setTimeout()            | 在指定的时间后执行一段代码                                   |
+| setInterval()           | 以固定的时间间隔，重复运行一段代码                           |
+| requestAnimationFrame() | setInterval()的现代版本;在浏览器下一次重新绘制显示之前执行指定的代码块，从而允许动画在适当的帧率下运行，而不管它在什么环境中运行 |
+| clearInterval()         |                                                              |
+| clearTimeout()          |                                                              |
+| encodeURI()             | 对一个URI进行编码                                            |
+| decodeURI               | 对一个URI进行解码                                            |
+| eval                    | 执行字符串表达式                                             |
+| parseInt                | 将数据转为整型                                               |
+| parseFloat              | 将数据转为浮点型                                             |
+| typeof                  | 判断一个数据类型                                             |
+| isNaN                   | 检查一个值是否为NaN,如果是->true , 否->false                 |
+| isFinite                | 检查一个值是否为有限值，是->true  否->false                  |
+|                         |                                                              |
+|                         |                                                              |
+|                         |                                                              |
+|                         |                                                              |
+|                         |                                                              |
+|                         |                                                              |
 
 
 
-## Other API
-
-| API            | 说明 | 版本 |
-| -------------- | ---- | ---- |
-| Map            |      |      |
-| Set            |      |      |
-| WeakMap        |      |      |
-| WeakSet        |      |      |
-| sessionStorage |      |      |
-| localStorage   |      |      |
-|                |      |      |
-|                |      |      |
-|                |      |      |
+## Storage
 
 ### Storage API
 
