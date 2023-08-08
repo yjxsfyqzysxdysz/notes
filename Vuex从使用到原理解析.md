@@ -196,7 +196,10 @@ function resetStoreVM (store, state, hot) {
 }
 ```
 
-从上面源码，我们可以看出Vuex的state状态是响应式，是借助vue的data是响应式，将state存入vue实例组件的data中；Vuex的getters则是借助vue的计算属性computed实现数据实时监听。
+从上面源码，我们可以看出
+
++ Vuex的state状态是响应式，是借助vue的data是响应式，将state存入vue实例组件的data中；
++ Vuex的getters则是借助vue的计算属性computed实现数据实时监听。
 
 computed计算属性监听data数据变更主要经历以下几个过程：
 

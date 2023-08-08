@@ -29,7 +29,7 @@ JavaScript 是典型的单线程单并发语言，即表示在同一时间片内
 
 Event Loop（事件循环）并不是 JavaScript 中独有的，其广泛应用于各个领域的异步编程实现中；所谓的 Event Loop 即是一系列回调函数的集合，在执行某个异步函数时，会将其回调压入队列中，JavaScript 引擎会在异步代码执行完毕后开始处理其关联的回调。
 
-**事件循环**是指：执行一个宏任务，然后执行清空微任务队列，循环再执行一个宏任务，在清空微任务队列
+**事件循环**是指：执行==一个==宏任务，然后执行==清空==微任务队列，循环再执行一个宏任务，在清空微任务队列
 
 + **宏任务 (`macrotask(task)`) ：** `setTimeout`、`setInterval`、`setImmediate`、`Promise`、`script`、`IO`、`UI Rendering`、`requestAnimationFrame`
 + **微任务 (`microtask(jobs)`)：**  `Promise.then()/catch()/finally()`、`ajax`、`Object.observe(已废弃)`、`process.nextTick`、`MutationObserver(html5新特性)`
@@ -122,6 +122,20 @@ console.log('main2');
  * process.nextTick2
  */
 ```
+
+
+
+![img](./image/eventLoop.jpg)
+
+从上图中我们可以看到，在主线程运行时，会产生**堆(heap)**和**栈(stack)**。
+
+**堆**中存的是我们声明的object类型的数据
+
+**栈**中存的是基本数据类型以及函数执行时的运行空间。
+
+**栈**中的代码会调用各种外部API，它们在任务队列中加入各种事件(onClick,onLoad,onDone)，只要栈中的代码执行完毕(js引擎存在monitoring process进程，会持续不断的检查主线程执行栈是否为空)，主线程就回去读取任务队列，在按顺序执行这些事件对应的回调函数。
+
+也就是说主线程从任务队列中读取事件，这个过程是循环不断的，所以这种运行机制又成为Event Loop(事件循环)。
 
 
 
